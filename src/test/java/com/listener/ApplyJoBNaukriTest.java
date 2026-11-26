@@ -19,10 +19,10 @@ import static com.pageObjectModel.NaukriDashBoard.botTextField;
 import static com.pageObjectModel.NaukriDashBoard.gettingTextOfRatioButton;
 
 public class ApplyJoBNaukriTest extends baseSetup {
-    PageObjectManager pageObjectManager;
+    static PageObjectManager pageObjectManager;
     List<WebElement> checkBox;
     int i;
-    String optionsOfChatBot;
+    static String optionsOfChatBot;
 
     @BeforeTest
     public void setup() throws IOException {
@@ -43,7 +43,7 @@ public class ApplyJoBNaukriTest extends baseSetup {
     }
 
     @Test(priority = 2)
-    public void tearDown() {
+    public static void tearDown() {
         String title = driver.getTitle();
         System.out.println(title);
         PageObjectManager pageObjectManager = PageObjectManager.getPageObjectManager();
@@ -55,11 +55,11 @@ public class ApplyJoBNaukriTest extends baseSetup {
     }
 
     @Test(priority = 3)
-    public void clickCheckBox() {
+    public static void clickCheckBox() {
         pageObjectManager.getDashBoard().clickCheckBox();
     }
     @Test(priority = 4)
-    public void answerBot() throws InterruptedException {
+    public static void answerBot() throws InterruptedException {
         String botText = pageObjectManager.getDashBoard().getTextOfChatBot();
 
         try
@@ -100,7 +100,7 @@ public class ApplyJoBNaukriTest extends baseSetup {
 
     }
     @Test(priority = 5)
-    void backRefreshApply() throws InterruptedException {
+    static void backRefreshApply() throws InterruptedException {
 Thread.sleep(3000);
         driver.navigate().back();
         driver.navigate().refresh();
@@ -114,8 +114,12 @@ Thread.sleep(3000);
 
         }catch (Exception e){
             System.out.println("No more jobs to apply on HandPicked for you tab");
-            pageObjectManager.getDashBoard().clickJobPreferenceButton1();
-        }
+            try {
+                pageObjectManager.getDashBoard().clickJobPreferenceButton1();
+            }catch (Exception e1){
+                System.out.println("Failed To Click Job Preference");
+            }
+            }
         try{
             if(NaukriDashBoard.checkBox.getFirst().isDisplayed() && NaukriDashBoard.checkBox.getFirst().isEnabled()) {
                 clickCheckBox();
@@ -125,7 +129,11 @@ Thread.sleep(3000);
         }
         catch (Exception e){
             System.out.println("No more jobs to apply on Job Preference tab");
-            pageObjectManager.getDashBoard().clickYouMightLikeButton();
+            try {
+                pageObjectManager.getDashBoard().clickYouMightLikeButton();
+            } catch (Exception ex) {
+                System.out.println("Failed To Click You Might Like Button");
+            }
         }
         try {
             if(NaukriDashBoard.checkBox.getFirst().isDisplayed() && NaukriDashBoard.checkBox.getFirst().isEnabled()) {
@@ -136,6 +144,14 @@ Thread.sleep(3000);
         }
         catch (Exception e){
             System.out.println("No more jobs to apply on You Might Like tab");
+        }
+        try{
+            ApplyJoBNaukriTest.tearDown();
+            ApplyJoBNaukriTest.clickCheckBox();
+            ApplyJoBNaukriTest.answerBot();
+            ApplyJoBNaukriTest.backRefreshApply();
+        } catch (Exception e) {
+            System.out.println("All Failed");
         }
     }
 
